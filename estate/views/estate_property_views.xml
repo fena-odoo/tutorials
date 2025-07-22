@@ -75,6 +75,7 @@
                         </group>
                         <group>
                             <field name="expected_price"/>
+                            <field name="best_price" readonly="1"/>
                             <field name="selling_price"/>
                             <field name="tag_ids" widget="many2many_tags"/>
                         </group>
@@ -92,6 +93,7 @@
                                 <field name="garden"/>
                                 <field name="garden_area"/>
                                 <field name="garden_orientation"/>
+                                <field name="total_area" readonly="1"/>
                             </group>
                         </page>
 
