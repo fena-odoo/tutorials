@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Root menu -->
+    <menuitem id="estate_menu_root" name="Estate"/>
+
+    <!-- First-level menu -->
+    <menuitem id="estate_property_menu" name="Advertisement" parent="estate_menu_root"/>
+
+    <!-- Final menu item linking to your action -->
+    <menuitem id="estate_property_menu_action"
+        name="Properties"
+        parent="estate_property_menu"
+        action="estate_property_action"/>
+</odoo>
