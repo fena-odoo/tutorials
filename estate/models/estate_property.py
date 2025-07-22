@@ -43,6 +43,15 @@ class EstateProperty(models.Model):
         ]
     )
     
+    @api.onchange('garden')
+    def _onchange_garden(self):
+        if self.garden:
+            self.garden_area = 10
+            self.garden_orientation = 'north'
+        else:
+            self.garden_area = 0
+            self.garden_orientation = False
+    
     property_type_id = fields.Many2one(
         "estate.property.type",
         string="Property Type"
