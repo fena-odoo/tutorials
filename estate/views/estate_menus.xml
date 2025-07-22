@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <!-- Root menu -->
-    <menuitem id="menu_estate_root" name="Estate"/>
+    <menuitem id="menu_estate_root" name="Estate" sequence="10"/>
 
-    <!-- First-level submenu -->
-    <menuitem id="menu_estate_property" name="Advertisement" parent="menu_estate_root"/>
+    <!-- Advertisement Menu -->
+    <menuitem id="menu_estate_advertisement" name="Advertisement" parent="menu_estate_root" sequence="10"/>
+    <menuitem id="menu_estate_property_action" name="Properties"
+              parent="menu_estate_advertisement" action="estate.estate_property_action" sequence="20"/>
 
-    <!-- Link to property list action -->
-    <menuitem id="menu_estate_property_action" name="Properties" parent="menu_estate_property" action="estate.estate_property_action"/>
+    <!-- Settings Menu -->
+    <menuitem id="menu_estate_settings" name="Settings" parent="menu_estate_root" sequence="20"/>
+
+    <menuitem id="menu_property_type" name="Property Types"
+              parent="menu_estate_settings" action="estate.action_property_type" sequence="10"/>
+
+    <menuitem id="menu_property_tag" name="Property Tags"
+              parent="menu_estate_settings" action="estate.action_property_tag" sequence="20"/>
 </odoo>
