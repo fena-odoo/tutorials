@@ -68,3 +68,34 @@ class EstatePropertyOffer(models.Model):
         for offer in self:
             offer.status = 'refused'
         return True
+    
+    # Create method to ensure no offers lower than existing ones
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            property_id = vals.get('property_id')
+            offer_price = vals.get('price')
+
+            if not property_id:
+                raise UserError("Missing property on the offer.")
+
+            existing_offer = self.env['estate.property.offer'].search([
+                ('property_id', '=', property_id),
+                ('price', '>=', offer_price)
+            ], limit=1)
+
+            if existing_offer:
+                raise UserError("You cannot create an offer lower than an existing offer.")
+
+        # Actually create the offers
+        offers = super().create(vals_list)
+
+        # ✅ Force recompute of the stored related field so offer_count works
+        offers._recompute_field('property_type_id')
+
+        # ✅ Set property state to 'offer_received'
+        for offer in offers:
+            offer.property_id.state = 'offer_received'
+
+        return offers
+
