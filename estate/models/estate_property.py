@@ -1,5 +1,6 @@
 from odoo import api, models, fields
 from datetime import date, timedelta
+from odoo.exceptions import UserError
 
 class EstateProperty(models.Model):
     _name = "estate.property"
@@ -18,7 +19,8 @@ class EstateProperty(models.Model):
         ],
         default='new',
         required=True,
-        copy=False
+        copy=False,
+        string="Status"
     )
     postcode = fields.Char()
     date_availability = fields.Date(
@@ -97,4 +99,21 @@ class EstateProperty(models.Model):
         for property in self:
             prices = property.offer_ids.mapped('price')
             property.best_price = max(prices) if prices else 0.0
+
+
+# Action methods for property sold or rejected          
+    def action_mark_sold(self):
+        for property in self:
+            if property.state == 'cancelded':
+                raise UserError("Cancelled properties cannot be sold.")
+            property.state = 'sold'
+        return True
+
+    def action_cancel_property(self):
+        for property in self:
+            if property.state == 'sold':
+                raise UserError("Sold properties cannot be cancelled.")
+            property.state = 'cancelled'
+        return True
+
 

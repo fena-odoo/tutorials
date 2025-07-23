@@ -1,5 +1,6 @@
 from odoo import api, models, fields
 from datetime import timedelta
+from odoo.exceptions import UserError
 
 class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
@@ -28,5 +29,29 @@ class EstatePropertyOffer(models.Model):
 
     def _inverse_date_deadline(self):
         for offer in self:
-            create_date = offer.create_date or fields.Date.today()
+            create_date = offer.create_date.date() or fields.Date.today()
             offer.validity = (offer.date_deadline - create_date).days
+            
+    def action_accept_offer(self):
+        for offer in self:
+            if offer.property_id.state == 'sold':
+                raise UserError("You cannot accept an offer for a sold property.")
+
+            # Refuse all other offers first
+            other_offers = self.search([
+                ('property_id', '=', offer.property_id.id),
+                ('id', '!=', offer.id)
+            ])
+            other_offers.write({'status': 'refused'})
+
+            # Accept this offer
+            offer.status = 'accepted'
+            offer.property_id.state = 'offer_accepted'
+            offer.property_id.selling_price = offer.price
+            offer.property_id.buyer_id = offer.partner_id
+        return True
+
+    def action_refuse_offer(self):
+        for offer in self:
+            offer.status = 'refused'
+        return True
