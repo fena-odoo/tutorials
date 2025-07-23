@@ -23,6 +23,8 @@
                 <separator/> -->
                 <filter string="New Properties" name="new_only" domain="[('state', '=', 'new')]"/>
                 <filter string="Offer Received" name="offer_received_only" domain="[('state', '=', 'offer_received')]"/>
+                <filter name="available" string="Available" domain="[('state', 'in', ('new', 'offer_received'))]"/>
+                <field name="living_area" string="Min. Living Area" filter_domain="[('living_area', '>=', self)]"/>
 
                 <!-- Group By -->
                 <group expand="1" string="Group By">
@@ -161,5 +163,6 @@
         <field name="res_model">estate.property</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_estate_property_search"/>
+        <field name="context">{'search_default_available': 1}</field>
     </record>
 </odoo>
