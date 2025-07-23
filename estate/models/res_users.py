@@ -1,11 +1,11 @@
 from odoo import models, fields
 
 class ResUsers(models.Model):
-    _inherit = 'res.users'  # <-- extension inheritance (modifies res.users in-place)
+    _inherit = 'res.users'
 
     property_ids = fields.One2many(
         comodel_name='estate.property',
-        inverse_name='salesperson_id',  # <-- Replace this with your actual field
+        inverse_name='salesperson_id',
         string='Properties',
-        domain=[('state', '=', 'new')]  # Only show properties that are still available
+        domain=[('state', '=', 'new')]
     )
