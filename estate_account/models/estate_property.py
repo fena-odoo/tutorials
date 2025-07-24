@@ -1,4 +1,4 @@
-from odoo import models, api, Command
+from odoo import Command, models
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -14,21 +14,35 @@ class EstateProperty(models.Model):
         _logger.info(">>> Called super(). Now creating invoice(s)")
 
         for property in self:
-            _logger.info(f">>> Processing property: {property.name} (ID: {property.id})")
+            _logger.info(
+                f">>> Processing property: {property.name} (ID: {property.id})"
+            )
 
             if not property.buyer_id:
-                _logger.warning(f">>> No buyer_id found for property: {property.name}")
+                _logger.warning(
+                    f">>> No buyer_id found for property: {property.name}"
+                )
                 continue
             else:
-                _logger.info(f">>> Buyer ID: {property.buyer_id.id} - {property.buyer_id.name}")
+                _logger.info(
+                    f">>> Buyer ID: {property.buyer_id.id} - "
+                    f"{property.buyer_id.name}"
+                )
 
             # Find sales journal
-            journal = self.env['account.journal'].search([('type', '=', 'sale')], limit=1)
+            journal = self.env['account.journal'].search(
+                [('type', '=', 'sale')],
+                limit=1
+            )
             if not journal:
-                _logger.warning(">>> No sales journal found. Cannot create invoice.")
+                _logger.warning(
+                    ">>> No sales journal found. Cannot create invoice."
+                )
                 continue
             else:
-                _logger.info(f">>> Using journal: {journal.name} (ID: {journal.id})")
+                _logger.info(
+                    f">>> Using journal: {journal.name} (ID: {journal.id})"
+                )
 
             # Compute values
             commission = property.selling_price * 0.06
@@ -55,9 +69,15 @@ class EstateProperty(models.Model):
 
             try:
                 invoice = self.env['account.move'].sudo().create(invoice_vals)
-                _logger.info(f">>> Invoice created: {invoice.name or invoice.id} for property {property.name}")
+                _logger.info(
+                    f">>> Invoice created: {invoice.name or invoice.id} "
+                    f"for property {property.name}"
+                )
             except Exception as e:
-                _logger.error(f"!!! Failed to create invoice for {property.name}: {str(e)}")
+                _logger.error(
+                    f"!!! Failed to create invoice for {property.name}: "
+                    f"{str(e)}"
+                )
 
         _logger.info(">>> Finished invoice creation loop")
         return res

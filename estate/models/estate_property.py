@@ -1,7 +1,8 @@
-from odoo import api, models, fields
 from datetime import date, timedelta
+from odoo import api, fields, models
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.float_utils import float_compare
+
 
 class EstateProperty(models.Model):
     _name = "estate.property"
@@ -10,8 +11,8 @@ class EstateProperty(models.Model):
 
     name = fields.Char(string="Title", required=True)
     description = fields.Text()
-    active = fields.Boolean(default=True)  # reserved: controls visibility
-    state = fields.Selection(              # reserved: controls lifecycle stages
+    active = fields.Boolean(default=True)
+    state = fields.Selection(
         selection=[
             ('new', 'New'),
             ('offer_received', 'Offer Received'),
@@ -32,12 +33,20 @@ class EstateProperty(models.Model):
     )
     expected_price = fields.Float(required=True)
     selling_price = fields.Float(readonly=True, copy=False)
-    
+
     _sql_constraints = [
-        ('check_expected_price_positive', 'CHECK(expected_price > 0)', 'The expected price must be strictly positive.'),
-        ('check_selling_price_positive', 'CHECK(selling_price >= 0)', 'The selling price must be positive.')
+        (
+            'check_expected_price_positive',
+            'CHECK(expected_price > 0)',
+            'The expected price must be strictly positive.'
+        ),
+        (
+            'check_selling_price_positive',
+            'CHECK(selling_price >= 0)',
+            'The selling price must be positive.'
+        )
     ]
-    
+
     @api.constrains('expected_price', 'selling_price')
     def _check_selling_price_margin(self):
         for record in self:
@@ -46,7 +55,7 @@ class EstateProperty(models.Model):
             min_price = record.expected_price * 0.9
             if float_compare(record.selling_price, min_price, precision_digits=2) < 0:
                 raise ValidationError("Selling price cannot be lower than 90% of the expected price. If you want to set a lower price, please adjust the expected price first.")
-    
+
     bedrooms = fields.Integer(default=2)
     living_area = fields.Integer(string="Living Area (sqm)")
     facades = fields.Integer()
@@ -61,7 +70,7 @@ class EstateProperty(models.Model):
             ('west', 'West')
         ]
     )
-    
+
     @api.onchange('garden')
     def _onchange_garden(self):
         if self.garden:
@@ -70,12 +79,12 @@ class EstateProperty(models.Model):
         else:
             self.garden_area = 0
             self.garden_orientation = False
-    
+
     property_type_id = fields.Many2one(
         "estate.property.type",
         string="Property Type"
     )
-    
+
     buyer_id = fields.Many2one(
         'res.partner',
         string='Buyer',
@@ -90,27 +99,30 @@ class EstateProperty(models.Model):
     )
 
     tag_ids = fields.Many2many('estate.property.tag', string='Tags')
-    
+
     offer_ids = fields.One2many(
         'estate.property.offer',
         'property_id',
         string="Offers"
     )
+
 # Compute the total area
     total_area = fields.Integer(
         string="Total Area (sqm)",
         compute="_compute_total_area"
     )
+
     @api.depends('living_area', 'garden_area')
     def _compute_total_area(self):
         for property in self:
             property.total_area = (property.living_area or 0) + (property.garden_area or 0)
-            
+
 # Compute the best offer price
     best_price = fields.Float(
         string="Best Offer",
         compute="_compute_best_price"
     )
+
     @api.depends('offer_ids.price')
     def _compute_best_price(self):
         for property in self:
@@ -132,10 +144,12 @@ class EstateProperty(models.Model):
                 raise UserError("Sold properties cannot be cancelled.")
             property.state = 'cancelled'
         return True
-    
+
 # Deletion constraint to prevent deletion of properties in certain states
     @api.ondelete(at_uninstall=False)
     def _check_deletable_state(self):
         for record in self:
             if record.state not in ['new', 'cancelled']:
-                raise UserError("You can only delete properties that are New or Cancelled.")
+                raise UserError(
+                    "You can only delete properties that are New or Cancelled."
+                )
