@@ -1,4 +1,4 @@
-from odoo import models, api
+from odoo import models, api, Command
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ class EstateProperty(models.Model):
             else:
                 _logger.info(f">>> Buyer ID: {property.buyer_id.id} - {property.buyer_id.name}")
 
-            # Search for a sales journal
+            # Find sales journal
             journal = self.env['account.journal'].search([('type', '=', 'sale')], limit=1)
             if not journal:
                 _logger.warning(">>> No sales journal found. Cannot create invoice.")
@@ -30,10 +30,27 @@ class EstateProperty(models.Model):
             else:
                 _logger.info(f">>> Using journal: {journal.name} (ID: {journal.id})")
 
+            # Compute values
+            commission = property.selling_price * 0.06
+            admin_fee = 100.00
+
+            # Create the invoice with two lines
             invoice_vals = {
                 'partner_id': property.buyer_id.id,
-                'move_type': 'out_invoice',  # This is for customer invoices
+                'move_type': 'out_invoice',
                 'journal_id': journal.id,
+                'invoice_line_ids': [
+                    Command.create({
+                        'name': f"6% Commission for {property.name}",
+                        'quantity': 1,
+                        'price_unit': commission,
+                    }),
+                    Command.create({
+                        'name': "Administrative Fee",
+                        'quantity': 1,
+                        'price_unit': admin_fee,
+                    }),
+                ],
             }
 
             try:
