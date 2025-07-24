@@ -8,32 +8,6 @@ class EstateProperty(models.Model):
     _name = "estate.property"
     _description = "Real Estate Property"
     _order = "id desc"
-
-    name = fields.Char(string="Title", required=True)
-    description = fields.Text()
-    active = fields.Boolean(default=True)
-    state = fields.Selection(
-        selection=[
-            ('new', 'New'),
-            ('offer_received', 'Offer Received'),
-            ('offer_accepted', 'Offer Accepted'),
-            ('sold', 'Sold'),
-            ('cancelled', 'Cancelled')
-        ],
-        default='new',
-        required=True,
-        copy=False,
-        string="Status"
-    )
-    postcode = fields.Char()
-    date_availability = fields.Date(
-        string="Available From",
-        copy=False,
-        default=lambda self: date.today() + timedelta(days=90),
-    )
-    expected_price = fields.Float(required=True)
-    selling_price = fields.Float(readonly=True, copy=False)
-
     _sql_constraints = [
         (
             'check_expected_price_positive',
@@ -47,21 +21,65 @@ class EstateProperty(models.Model):
         )
     ]
 
-    @api.constrains('expected_price', 'selling_price')
-    def _check_selling_price_margin(self):
-        for record in self:
-            if not record.selling_price:
-                continue  # Do not validate if no offer is accepted yet
-            min_price = record.expected_price * 0.9
-            if float_compare(record.selling_price, min_price, precision_digits=2) < 0:
-                raise ValidationError("Selling price cannot be lower than 90% of the expected price. If you want to set a lower price, please adjust the expected price first.")
-
+    name = fields.Char(string="Title", required=True)
+    description = fields.Text()
+    active = fields.Boolean(default=True)
+    postcode = fields.Char()
+    date_availability = fields.Date(
+        string="Available From",
+        copy=False,
+        default=lambda self: date.today() + timedelta(days=90),
+    )
+    expected_price = fields.Float(required=True)
+    selling_price = fields.Float(readonly=True, copy=False)
     bedrooms = fields.Integer(default=2)
     living_area = fields.Integer(string="Living Area (sqm)")
     facades = fields.Integer()
     garage = fields.Boolean()
     garden = fields.Boolean()
     garden_area = fields.Integer(string="Garden Area (sqm)")
+    total_area = fields.Integer(
+        string="Total Area (sqm)",
+        compute="_compute_total_area"
+    )
+    best_price = fields.Float(
+        string="Best Offer",
+        compute="_compute_best_price"
+    )
+    property_type_id = fields.Many2one(
+        "estate.property.type",
+        string="Property Type"
+    )
+    buyer_id = fields.Many2one(
+        'res.partner',
+        string='Buyer',
+        copy=False
+    )
+    salesperson_id = fields.Many2one(
+        'res.users',
+        string='Salesperson',
+        index=True,
+        default=lambda self: self.env.user
+    )
+    tag_ids = fields.Many2many('estate.property.tag', string='Tags')
+    offer_ids = fields.One2many(
+        'estate.property.offer',
+        'property_id',
+        string="Offers"
+    )
+    state = fields.Selection(
+        selection=[
+            ('new', 'New'),
+            ('offer_received', 'Offer Received'),
+            ('offer_accepted', 'Offer Accepted'),
+            ('sold', 'Sold'),
+            ('cancelled', 'Cancelled')
+        ],
+        default='new',
+        required=True,
+        copy=False,
+        string="Status"
+    )
     garden_orientation = fields.Selection(
         selection=[
             ('north', 'North'),
@@ -70,6 +88,35 @@ class EstateProperty(models.Model):
             ('west', 'West')
         ]
     )
+
+    # Compute the total area
+    @api.depends('living_area', 'garden_area')
+    def _compute_total_area(self):
+        for property in self:
+            property.total_area = (
+                (property.living_area or 0) + (property.garden_area or 0)
+            )
+
+    # Compute the best offer price
+    @api.depends('offer_ids.price')
+    def _compute_best_price(self):
+        for property in self:
+            prices = property.offer_ids.mapped('price')
+            property.best_price = max(prices) if prices else 0.0
+
+    @api.constrains('expected_price', 'selling_price')
+    def _check_selling_price_margin(self):
+        for record in self:
+            if not record.selling_price:
+                continue  # Do not validate if no offer is accepted yet
+            min_price = record.expected_price * 0.9
+            if float_compare(
+                record.selling_price, min_price, precision_digits=2
+            ) < 0:
+                raise ValidationError(
+                    "Selling price cannot be lower than 90% of the expected price. "
+                    "If you want to set a lower price, please adjust the expected price first."
+                )
 
     @api.onchange('garden')
     def _onchange_garden(self):
@@ -80,55 +127,14 @@ class EstateProperty(models.Model):
             self.garden_area = 0
             self.garden_orientation = False
 
-    property_type_id = fields.Many2one(
-        "estate.property.type",
-        string="Property Type"
-    )
-
-    buyer_id = fields.Many2one(
-        'res.partner',
-        string='Buyer',
-        copy=False
-    )
-
-    salesperson_id = fields.Many2one(
-        'res.users',
-        string='Salesperson',
-        index=True,
-        default=lambda self: self.env.user
-    )
-
-    tag_ids = fields.Many2many('estate.property.tag', string='Tags')
-
-    offer_ids = fields.One2many(
-        'estate.property.offer',
-        'property_id',
-        string="Offers"
-    )
-
-# Compute the total area
-    total_area = fields.Integer(
-        string="Total Area (sqm)",
-        compute="_compute_total_area"
-    )
-
-    @api.depends('living_area', 'garden_area')
-    def _compute_total_area(self):
-        for property in self:
-            property.total_area = (property.living_area or 0) + (property.garden_area or 0)
-
-# Compute the best offer price
-    best_price = fields.Float(
-        string="Best Offer",
-        compute="_compute_best_price"
-    )
-
-    @api.depends('offer_ids.price')
-    def _compute_best_price(self):
-        for property in self:
-            prices = property.offer_ids.mapped('price')
-            property.best_price = max(prices) if prices else 0.0
-
+# Deletion constraint to prevent deletion of properties in certain states
+    @api.ondelete(at_uninstall=False)
+    def _check_deletable_state(self):
+        for record in self:
+            if record.state not in ['new', 'cancelled']:
+                raise UserError(
+                    "You can only delete properties that are New or Cancelled."
+                )
 
 # Action methods for property sold or rejected          
     def action_mark_sold(self):
@@ -145,11 +151,3 @@ class EstateProperty(models.Model):
             property.state = 'cancelled'
         return True
 
-# Deletion constraint to prevent deletion of properties in certain states
-    @api.ondelete(at_uninstall=False)
-    def _check_deletable_state(self):
-        for record in self:
-            if record.state not in ['new', 'cancelled']:
-                raise UserError(
-                    "You can only delete properties that are New or Cancelled."
-                )
