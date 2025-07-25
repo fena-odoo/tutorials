@@ -1,4 +1,5 @@
 <odoo>
+    <!-- Report action for estate.property -->
     <record id="action_report_property_offers" model="ir.actions.report">
         <field name="name">Property Offers</field>
         <field name="model">estate.property</field>
@@ -7,6 +8,18 @@
         <field name="report_file">estate.report_property_offers</field>
         <field name="print_report_name">'Offers - %s' % (object.name or '')</field>
         <field name="binding_model_id" ref="estate.model_estate_property"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- Report action for res.users -->
+    <record id="action_report_user_properties" model="ir.actions.report">
+        <field name="name">Salesperson Properties</field>
+        <field name="model">res.users</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">estate.report_user_properties</field>
+        <field name="report_file">estate.report_user_properties</field>
+        <field name="print_report_name">'Properties - %s' % (object.name or '')</field>
+        <field name="binding_model_id" ref="base.model_res_users"/>
         <field name="binding_type">report</field>
     </record>
 </odoo>

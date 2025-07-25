@@ -7,6 +7,7 @@
         # "data/master_property_types.xml",
         "report/estate_property_templates.xml",
         "report/estate_property_reports.xml",
+        'report/estate_user_property_report.xml',
         'views/estate_property_views.xml',
         'views/estate_property_offer_views.xml',
         'views/property_type_views.xml',

@@ -34,6 +34,7 @@
         <field name="garden_orientation">south</field>
         <field name="property_type_id" ref="property_residential"/>
         <field name="user_id" ref="base.user_admin"/>
+        <field name="salesperson_id" ref="base.user_admin"/>
     </record>
 
     <record id="trailer" model="estate.property">
@@ -51,6 +52,8 @@
         <field name="garden">True</field>
         <field name="property_type_id" ref="property_residential"/>
         <field name="user_id" ref="base.user_admin"/>
+        <field name="salesperson_id" ref="base.user_admin"/>
+
     </record>
 
     <record id="space_ship" model="estate.property">
@@ -62,6 +65,8 @@
         <field name="expected_price">45890000</field>
         <field name="property_type_id" ref="property_industrial"/>
         <field name="user_id" ref="base.user_admin"/>
+        <field name="salesperson_id" ref="base.user_admin"/>
+
     </record>
 
     <record id="cabin" model="estate.property">
@@ -78,6 +83,8 @@
         <field name="garden">True</field>
         <field name="property_type_id" ref="property_residential"/>
         <field name="user_id" ref="base.user_admin"/>
+        <field name="salesperson_id" ref="base.user_admin"/>
+
     </record>
 
     <!-- Offers -->

@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <!-- SUB-TEMPLATE for offer table -->
+    <template id="property_offer_table">
+        <t t-if="offers">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Price</th>
+                        <th>Partner</th>
+                        <th>Validity (days)</th>
+                        <th>Deadline</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="offers" t-as="offer">
+                        <td><span t-field="offer.price"/></td>
+                        <td><span t-field="offer.partner_id"/></td>
+                        <td><span t-field="offer.validity"/></td>
+                        <td><span t-field="offer.date_deadline"/></td>
+                        <td><span t-field="offer.status"/></td>
+                    </tr>
+                </tbody>
+            </table>
+        </t>
+        <t t-else="">
+            <p>No offers have been made for this property yet.</p>
+        </t>
+    </template>
+
+    <!-- MAIN REPORT TEMPLATE for estate.property -->
     <template id="report_property_offers">
         <t t-foreach="docs" t-as="property">
             <t t-call="web.html_container">
@@ -13,32 +43,9 @@
                             <strong>Expected Price:</strong>
                             <span t-field="property.expected_price"/>
                         </p>
+
                         <t t-set="offers" t-value="property.offer_ids"/>
-                        <t t-if="offers">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>Price</th>
-                                        <th>Partner</th>
-                                        <th>Validity (days)</th>
-                                        <th>Deadline</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr t-foreach="offers" t-as="offer">
-                                        <td><span t-field="offer.price"/></td>
-                                        <td><span t-field="offer.partner_id"/></td>
-                                        <td><span t-field="offer.validity"/></td>
-                                        <td><span t-field="offer.date_deadline"/></td>
-                                        <td><span t-field="offer.status"/></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </t>
-                        <t t-else="">
-                            <p>No offers have been made for this property yet.</p>
-                        </t>
+                        <t t-call="estate.property_offer_table"/>
                     </div>
                 </t>
             </t>
