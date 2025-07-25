@@ -46,6 +46,7 @@ class EstateProperty(models.Model):
         string="Best Offer",
         compute="_compute_best_price"
     )
+    user_id = fields.Many2one('res.users', string="Assigned User")
     property_type_id = fields.Many2one(
         "estate.property.type",
         string="Property Type"

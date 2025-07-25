@@ -53,7 +53,6 @@ class EstatePropertyOffer(models.Model):
             create_date = offer.create_date.date() or fields.Date.today()
             offer.validity = (offer.date_deadline - create_date).days
 
-    # Create method to ensure no offers lower than existing ones
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
