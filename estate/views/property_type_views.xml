@@ -11,9 +11,10 @@
                                 <field name="name"/>
                             </h1>
                         </div>
-                        <button name="%(estate.action_estate_property_offer)d" type="action" class="oe_stat_button" icon="fa-briefcase">
+                        <button name="%(estate.action_estate_property_offer)d" type="action" class="oe_stat_button" icon="fa-briefcase" domain="[('property_id.property_type_id', '=', active_id)]">
                             <field name="offer_count" widget="statinfo" string="Offers"/>
                         </button>
+
                     </div>
 
                     <!-- Inline list of properties -->

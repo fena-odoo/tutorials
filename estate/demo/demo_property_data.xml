@@ -8,13 +8,14 @@
     </record>
 
     <record id="demo_property_villa" model="estate.property">
+        <field name="salesperson_id" search="[('login', '=', 'admin')]"/>
         <field name="name">Big Villa</field>
         <field name="state">new</field>
         <field name="description">A nice and big villa</field>
         <field name="postcode">12345</field>
         <field name="date_availability">2020-02-02</field>
-        <field name="expected_price">1600000</field>
-        <field name="selling_price">1500000</field>
+        <field name="expected_price">1100000</field>
+        <field name="selling_price">1200000</field>
         <field name="bedrooms">6</field>
         <field name="living_area">100</field>
         <field name="facades">4</field>
@@ -32,7 +33,7 @@
         <field name="postcode">54321</field>
         <field name="date_availability">1970-01-01</field>
         <field name="expected_price">100000</field>
-        <field name="selling_price">90000</field>
+        <field name="selling_price">95000</field>
         <field name="living_area">10</field>
         <field name="facades">4</field>
         <field name="garage">False</field>
@@ -42,6 +43,26 @@
         <field name="property_type_id" ref="estate.property_type_residential"/>
     </record>
 
+    <record id="demo_property_cabin" model="estate.property">
+        <field name="name">Mountain Cabin</field>
+        <field name="expected_price">100000</field>
+        <field name="garden">True</field>
+        <field name="property_type_id" ref="estate.property_type_residential"/>
+        <field name="offer_ids" eval="[
+        Command.create({
+            'partner_id': ref('estate.res_partner_azure_interior'),
+            'price': 190000,
+            'validity': 10,
+        }),
+        Command.create({
+            'partner_id': ref('estate.res_partner_deco_addict'),
+            'price': 195000,
+            'validity': 14,
+        }),
+    ]"/>
+    </record>
+
+
     <!-- Demo Offers -->
 
     <!-- Azure Interior - offer 1 -->
@@ -50,6 +71,7 @@
         <field name="property_id" ref="estate.demo_property_villa"/>
         <field name="price">1000000</field>
         <field name="validity">14</field>
+        <field name="date_deadline" eval="(datetime.now() + timedelta(days=14)).date().isoformat()"/>
     </record>
 
     <!-- Azure Interior - offer 2 -->
@@ -58,6 +80,7 @@
         <field name="property_id" ref="estate.demo_property_villa"/>
         <field name="price">1500000</field>
         <field name="validity">14</field>
+        <field name="date_deadline" eval="(datetime.now() + timedelta(days=14)).date().isoformat()"/>
     </record>
 
     <!-- Deco Addict - offer -->
@@ -66,5 +89,15 @@
         <field name="property_id" ref="estate.demo_property_villa"/>
         <field name="price">1500001</field>
         <field name="validity">14</field>
+        <field name="date_deadline" eval="(datetime.now() + timedelta(days=14)).date().isoformat()"/>
     </record>
+
+    <!-- Call server-side methods AFTER creating the records -->
+    <function model="estate.property.offer" name="action_accept_offer">
+        <value eval="[ref('estate.demo_offer_azure_1')]"/>
+    </function>
+
+    <function model="estate.property.offer" name="action_refuse_offer">
+        <value eval="[ref('estate.demo_offer_azure_2'), ref('estate.demo_offer_deco')]"/>
+    </function>
 </odoo>
