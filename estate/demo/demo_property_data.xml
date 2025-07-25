@@ -1,0 +1,70 @@
+<odoo>
+    <record id="res_partner_azure_interior" model="res.partner">
+        <field name="name">Azure Interior</field>
+    </record>
+
+    <record id="res_partner_deco_addict" model="res.partner">
+        <field name="name">Deco Addict</field>
+    </record>
+
+    <record id="demo_property_villa" model="estate.property">
+        <field name="name">Big Villa</field>
+        <field name="state">new</field>
+        <field name="description">A nice and big villa</field>
+        <field name="postcode">12345</field>
+        <field name="date_availability">2020-02-02</field>
+        <field name="expected_price">1600000</field>
+        <field name="selling_price">1500000</field>
+        <field name="bedrooms">6</field>
+        <field name="living_area">100</field>
+        <field name="facades">4</field>
+        <field name="garage">True</field>
+        <field name="garden">True</field>
+        <field name="garden_area">100000</field>
+        <field name="garden_orientation">south</field>
+        <field name="property_type_id" ref="estate.property_type_residential"/>
+    </record>
+
+    <record id="demo_property_trailer" model="estate.property">
+        <field name="name">Trailer home</field>
+        <field name="state">cancelled</field>
+        <field name="description">Home in a trailer park</field>
+        <field name="postcode">54321</field>
+        <field name="date_availability">1970-01-01</field>
+        <field name="expected_price">100000</field>
+        <field name="selling_price">90000</field>
+        <field name="living_area">10</field>
+        <field name="facades">4</field>
+        <field name="garage">False</field>
+        <field name="garden">True</field>
+        <field name="garden_area">0</field>
+        <field name="garden_orientation">south</field>
+        <field name="property_type_id" ref="estate.property_type_residential"/>
+    </record>
+
+    <!-- Demo Offers -->
+
+    <!-- Azure Interior - offer 1 -->
+    <record id="demo_offer_azure_1" model="estate.property.offer">
+        <field name="partner_id" ref="estate.res_partner_azure_interior"/>
+        <field name="property_id" ref="estate.demo_property_villa"/>
+        <field name="price">1000000</field>
+        <field name="validity">14</field>
+    </record>
+
+    <!-- Azure Interior - offer 2 -->
+    <record id="demo_offer_azure_2" model="estate.property.offer">
+        <field name="partner_id" ref="estate.res_partner_azure_interior"/>
+        <field name="property_id" ref="estate.demo_property_villa"/>
+        <field name="price">1500000</field>
+        <field name="validity">14</field>
+    </record>
+
+    <!-- Deco Addict - offer -->
+    <record id="demo_offer_deco" model="estate.property.offer">
+        <field name="partner_id" ref="estate.res_partner_deco_addict"/>
+        <field name="property_id" ref="estate.demo_property_villa"/>
+        <field name="price">1500001</field>
+        <field name="validity">14</field>
+    </record>
+</odoo>
