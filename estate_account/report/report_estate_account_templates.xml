@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <template id="report_property_offers_inherit" inherit_id="estate.report_property_offers">
+        <xpath expr="//div[hasclass('page')]" position="inside">
+            <t t-if="property.state == 'sold'">
+                <p>
+                    <strong>Invoice:</strong>
+                    <t t-if="property.invoice_id">
+                        <span t-field="property.invoice_id.name"/>
+                        - <span t-field="property.invoice_id.amount_total"/>€
+                    </t>
+                    <t t-else="">
+                        No invoice found.
+                    </t>
+                </p>
+            </t>
+        </xpath>
+    </template>
+</odoo>

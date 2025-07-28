@@ -4,5 +4,7 @@
     'depends': ['estate', 'account'],
     'description': 'Generate invoice when a property is sold',
     'application': False,
-    'data': [],
+    'data': [
+        'report/report_estate_account_templates.xml',
+    ],
 }

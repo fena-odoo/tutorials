@@ -1,4 +1,4 @@
-from odoo import Command, models
+from odoo import fields, Command, models
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -6,6 +6,8 @@ _logger = logging.getLogger(__name__)
 
 class EstateProperty(models.Model):
     _inherit = "estate.property"
+    
+    invoice_id = fields.Many2one('account.move', string="Invoice")
 
     def action_mark_sold(self):
         _logger.info(">>> action_mark_sold override triggered")
@@ -69,6 +71,7 @@ class EstateProperty(models.Model):
 
             try:
                 invoice = self.env['account.move'].sudo().create(invoice_vals)
+                property.invoice_id = invoice
                 _logger.info(
                     f">>> Invoice created: {invoice.name or invoice.id} "
                     f"for property {property.name}"
