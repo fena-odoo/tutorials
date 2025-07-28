@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="document_tax_totals_template_inherit_custom" inherit_id="account.document_tax_totals_template">
+        <xpath expr="//tr[@class='o_total']" position="after">
+            <tr class="o_total">
+                <td>
+                </td>
+                <td class="text-end">
+                    <span t-field="o.amount_total_words"></span>
+                </td>
+            </tr>
+            <tr class="o_total">
+                <td colspan="2">
+                    <div style="margin-top: 20px;">
+                        <p>
+                            <strong>Sign here,</strong>
+                        </p>
+                        <div style="height: 50px;"></div>
+                        <p>____________________________________________</p>
+                        <p>
+                            <span t-field="o.invoice_user_id.name"/>
+                        </p>
+                    </div>
+                </td>
+            </tr>
+
+        </xpath>
+    </template>
+</odoo>
