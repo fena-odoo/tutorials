@@ -1,0 +1,17 @@
+<templates xml:space="preserve">
+  <t t-name="awesome_owl.TodoList">
+    <div class="p-3">
+      <h4 class="mb-3">My Todo List</h4>
+
+       <input class="form-control mb-3" t-ref="todoInput"
+             placeholder="Enter a new task"
+             t-on-keyup="addTodo"/>
+
+      <div>
+        <t t-foreach="todos" t-as="todo" t-key="todo.id">
+          <TodoItem todo="todo"/>
+        </t>
+      </div>
+    </div>
+  </t>
+</templates>
