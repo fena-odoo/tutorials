@@ -7,11 +7,12 @@ export class TodoList extends Component {
   static components = { TodoItem };
 
   setup() {
-    this.todos = useState([
+    // this.todos = useState([
     //   { id: 1, description: "Buy milk", isCompleted: true },
     //   { id: 2, description: "Wash dishes", isCompleted: false },
     //   { id: 3, description: "Learn Owl.js", isCompleted: true },
-    ]);
+    // ]);
+    this.todos = useState([]);
     this.nextId = 1;
     // this.inputRef = useRef("todoInput"); // Reference to the input element
     // onMounted(() => {this.inputRef.el.focus();}); // Focus input on mount
@@ -33,4 +34,19 @@ export class TodoList extends Component {
       }
     }
   }
+
+  toggleTodo = (todoId) => {
+    const todo = this.todos.find((t) => t.id === todoId);
+    if (todo) {
+      todo.isCompleted = !todo.isCompleted;
+    }
+  };
+
+  removeTodo = (todoId) => {
+    const index = this.todos.findIndex((t) => t.id === todoId);
+    if (index >= 0) {
+        this.todos.splice(index, 1);
+    }
+};
+
 }

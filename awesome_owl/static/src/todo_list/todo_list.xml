@@ -9,7 +9,8 @@
 
       <div>
         <t t-foreach="todos" t-as="todo" t-key="todo.id">
-          <TodoItem todo="todo"/>
+          <TodoItem todo="todo" toggleState.bind="toggleTodo"
+            removeTodo.bind="removeTodo"/>
         </t>
       </div>
     </div>
