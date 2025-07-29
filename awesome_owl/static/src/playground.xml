@@ -1,10 +1,19 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<!-- awesome_owl/static/src/playground.xml -->
 <templates xml:space="preserve">
+    <t t-name="awesome_owl.Playground">
+        <h3 class="text-center">Double Counter</h3>
+        <div class="d-flex justify-content-around">
+            <Counter onChange.bind="updateA"/>
+            <Counter onChange.bind="updateB"/>
+            <p class="mt-4">Total Sum: <t t-esc="total"/></p>
+        </div>
 
-    <t t-name="awesome_owl.playground">
-        <div class="p-3">
-            hello world
+        <h3 class="text-center mb-3">Cards Showcase</h3>
+        <div class="d-flex flex-wrap justify-content-center">
+            <Card title="'Title 1'" content="'Just plain text content.'"/>
+            <Card title="'Title 2'" content="htmlContent"/>
+            <Card title="'Title 3'" content="plainText"/>
+            <Card title="'Title 4'"/>
         </div>
     </t>
-
 </templates>
