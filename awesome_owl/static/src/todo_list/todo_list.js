@@ -13,7 +13,7 @@ export class TodoList extends Component {
     //   { id: 3, description: "Learn Owl.js", isCompleted: true },
     // ]);
     this.todos = useState([]);
-    this.nextId = 1;
+    this.nextId = 0;
     // this.inputRef = useRef("todoInput"); // Reference to the input element
     // onMounted(() => {this.inputRef.el.focus();}); // Focus input on mount
     this.inputRef = useAutofocus("todoInput"); // Use custom hook for autofocus
