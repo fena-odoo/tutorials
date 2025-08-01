@@ -3,6 +3,7 @@
     'depends': ['base'],
     'application': True,
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         # "data/master_property_types.xml",
         "report/estate_property_templates.xml",

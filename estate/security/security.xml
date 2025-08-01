@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="estate.module_category_real_estate_brokerage" model="ir.module.category">
+        <field name="name">Real Estate Brokerage</field>
+        <field name="sequence">200</field>
+        <field name="description">Helps you manage real estate employees.</field>
+    </record>
+
+    <record id="estate_group_user" model="res.groups">
+        <field name="name">Agent</field>
+        <field name="category_id" ref="estate.module_category_real_estate_brokerage" />
+    </record>
+
+    <record id="estate_group_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="category_id" ref="estate.module_category_real_estate_brokerage" />
+        <field name="implied_ids" eval="[(4, ref('estate_group_user'))]" />
+    </record>
+
+    <!-- Agents can only see their own or unassigned properties -->
+    <record id="estate_rule_property_agent" model="ir.rule">
+        <field name="name">Agent: only own or unassigned properties</field>
+        <field name="model_id" ref="estate.model_estate_property"/>
+        <field name="perm_create" eval="False" />
+        <field name="domain_force">[
+            '|',
+            ('salesperson_id', '=', user.id),
+            ('salesperson_id', '=', False)
+        ]</field>
+        <field name="groups" eval="[(4, ref('estate.estate_group_user'))]" />
+    </record>
+
+    <!-- Managers see everything -->
+    <record id="estate_rule_property_manager" model="ir.rule">
+        <field name="name">Manager: see all properties</field>
+        <field name="model_id" ref="estate.model_estate_property"/>
+        <field name="groups" eval="[(4, ref('estate.estate_group_manager'))]"/>
+        <field name="domain_force">
+            ['|', ('user_id', '=', user.id), ('user_id', '!=', user.id)]
+        </field>
+        <field name="perm_create" eval="False" />
+    </record>
+</odoo>
