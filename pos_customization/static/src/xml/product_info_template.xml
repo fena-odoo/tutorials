@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="pos_customization.ProductInfoExtension" t-inherit="point_of_sale.ProductInfoPopup" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('financials-order')]" position="after">
+            <div class="section-logistic text-start border-top pt-3">
+                    <t t-log="props.info"/>
+                    <h3 class="section-title">Logistics</h3>
+                    <div class="section-logistic-body">
+                        <table class="table table-borderless mb-0">
+                            <tr>
+                                <td>Weight:</td>
+                                <td><t t-esc="props.info.productInfo.weight"/></td>
+                            </tr>
+                            <tr>
+                                <td>Volume:</td>
+                                <td><t t-esc="props.info.productInfo.volume"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+        </xpath>
+    </t>
+</templates>

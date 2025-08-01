@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="pos_customization.ReceiptCongratulatory" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <xpath expr="//ReceiptHeader" position="after">
+            <!-- <t t-log="props.data"/>
+            <t t-log="props.data.headerData"/>
+            <t t-log="props.data.headerData.congratulatoryText"/> -->
+            <div t-if="props.data.headerData.congratulatoryText">
+                <div class="text-center mt-2">
+                    <t t-esc="props.data.headerData.congratulatoryText"/>
+                </div>
+            </div>
+        </xpath>
+    </t>
+</templates>
