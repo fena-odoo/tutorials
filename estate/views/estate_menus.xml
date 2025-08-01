@@ -12,8 +12,8 @@
     <menuitem id="menu_estate_settings" name="Settings" parent="menu_estate_root" sequence="20"/>
 
     <menuitem id="menu_property_type" name="Property Types"
-              parent="menu_estate_settings" action="estate.action_property_type" sequence="10"/>
+              parent="menu_estate_settings" action="estate.action_property_type" sequence="10" groups="estate.estate_group_manager"/>
 
     <menuitem id="menu_property_tag" name="Property Tags"
-              parent="menu_estate_settings" action="estate.action_property_tag" sequence="20"/>
+              parent="menu_estate_settings" action="estate.action_property_tag" sequence="20" groups="estate.estate_group_manager"/>
 </odoo>
