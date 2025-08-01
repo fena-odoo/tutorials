@@ -42,6 +42,12 @@ class EstateProperty(models.Model):
         string="Total Area (sqm)",
         compute="_compute_total_area"
     )
+    company_id = fields.Many2one(
+        'res.company',
+        string="Company",
+        required=True,
+        default=lambda self: self.env.company
+    )
     best_price = fields.Float(
         string="Best Offer",
         compute="_compute_best_price"
@@ -60,7 +66,7 @@ class EstateProperty(models.Model):
         'res.users',
         string='Salesperson',
         index=True,
-        default=lambda self: self.env.user
+        # default=lambda self: self.env.user
     )
     tag_ids = fields.Many2many('estate.property.tag', string='Tags')
     offer_ids = fields.One2many(
