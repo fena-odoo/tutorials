@@ -11,15 +11,22 @@ class EstateProperty(models.Model):
 
     def action_mark_sold(self):
         _logger.info(">>> action_mark_sold override triggered")
-
+        
+        # Explicit check BEFORE any side-effect
+        self.check_access('write')
+        
+        print(" reached ".center(100, '='))  # Debug log
+        
         res = super(EstateProperty, self).action_mark_sold()
         _logger.info(">>> Called super(). Now creating invoice(s)")
-
+        
         for property in self:
+            property.check_access('write')
+            
             _logger.info(
                 f">>> Processing property: {property.name} (ID: {property.id})"
             )
-
+            
             if not property.buyer_id:
                 _logger.warning(
                     f">>> No buyer_id found for property: {property.name}"
@@ -82,5 +89,4 @@ class EstateProperty(models.Model):
                     f"{str(e)}"
                 )
 
-        _logger.info(">>> Finished invoice creation loop")
         return res
