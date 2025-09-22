@@ -61,6 +61,11 @@ class EstatePropertyOffer(models.Model):
 
             if not property_id:
                 raise UserError("Missing property on the offer.")
+            
+            # Reject offers on sold property
+            property = self.env['estate.property'].browse(property_id)
+            if property.state == 'sold':
+                raise UserError("Cannot create an offer on a sold property.")
 
             existing_offer = self.env['estate.property.offer'].search([
                 ('property_id', '=', property_id),
